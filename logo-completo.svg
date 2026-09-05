@@ -1,0 +1,14 @@
+<svg width="900" height="320" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(40,40)">
+    <rect x="0" y="0" width="240" height="240" rx="56" fill="#1f8a4c"/>
+    <circle cx="120" cy="120" r="80" fill="none" stroke="#ffffff" stroke-width="16"/>
+    <circle cx="120" cy="120" r="24" fill="#ffffff"/>
+    <line x1="120" y1="120" x2="120" y2="56" stroke="#ffffff" stroke-width="16" stroke-linecap="round"/>
+    <line x1="120" y1="120" x2="69" y2="154" stroke="#ffffff" stroke-width="16" stroke-linecap="round"/>
+    <line x1="120" y1="120" x2="171" y2="154" stroke="#ffffff" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="190" cy="54" r="38" fill="#ffffff"/>
+    <path d="M173 54 L186 67 L209 40" fill="none" stroke="#1f8a4c" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="320" y="150" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" fill="#1f8a4c">Test Autoescuela</text>
+  <text x="320" y="225" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="400" fill="#444444">Málaga</text>
+</svg>

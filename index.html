@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test DGT</title>
+<link rel="icon" type="image/svg+xml" href="logo-icono.svg">
+<link rel="apple-touch-icon" href="logo-icono-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b5cae">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Test DGT">
+<style>
+  :root{
+    --azul:#0b5cae; --azul-osc:#073d75; --verde:#1d8a4c; --rojo:#cf2d2d;
+    --bg:#eef3f8; --card:#ffffff; --txt:#1c2733; --gris:#6b7886; --linea:#dde5ee;
+    --amarillo:#f4b400;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--txt);line-height:1.5;min-height:100vh}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px}
+  header.top{display:flex;align-items:center;gap:12px;padding:6px 2px 18px}
+  .logo{width:44px;height:44px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .logo svg{width:100%;height:100%}
+  header.top h1{font-size:19px;font-weight:800}
+  header.top span{display:block;font-size:12px;color:var(--gris);font-weight:500}
+  .card{background:var(--card);border:1px solid var(--linea);border-radius:14px;padding:20px;margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(16,42,67,.04)}
+  h2{font-size:16px;margin-bottom:12px}
+  p.muted{color:var(--gris);font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  .mode{cursor:pointer;border:1px solid var(--linea);border-radius:12px;padding:16px;background:#fff;
+    transition:.15s;display:flex;flex-direction:column;gap:4px}
+  .mode:hover{border-color:var(--azul);box-shadow:0 4px 14px rgba(11,92,174,.12);transform:translateY(-1px)}
+  .mode b{font-size:15px}
+  .mode small{color:var(--gris);font-size:12.5px}
+  .mode .ico{font-size:22px;margin-bottom:4px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .stat{flex:1;min-width:90px;background:#f3f7fc;border-radius:10px;padding:10px 12px;text-align:center}
+  .stat b{display:block;font-size:20px;color:var(--azul-osc)}
+  .stat small{color:var(--gris);font-size:11.5px}
+  select,button{font-family:inherit;font-size:15px}
+  select{padding:9px 12px;border:1px solid var(--linea);border-radius:9px;background:#fff;width:100%;color:var(--txt)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;
+    padding:12px 18px;font-weight:700;cursor:pointer;background:var(--azul);color:#fff;transition:.15s}
+  .btn:hover{background:var(--azul-osc)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:#fff;color:var(--azul);border:1px solid var(--azul)}
+  .btn.ghost:hover{background:#f0f6fc}
+  .btn.sm{padding:8px 14px;font-size:13.5px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .row.end{justify-content:flex-end}
+  .row.between{justify-content:space-between}
+  .qbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;color:var(--gris)}
+  .progress{height:8px;background:#e3ebf3;border-radius:6px;overflow:hidden;margin-bottom:18px}
+  .progress > div{height:100%;background:var(--azul);width:0;transition:width .3s}
+  .cat-tag{display:inline-block;font-size:11.5px;font-weight:700;color:var(--azul-osc);
+    background:#e8f1fb;border-radius:20px;padding:3px 10px;margin-bottom:10px}
+  .q-text{font-size:17px;font-weight:600;margin-bottom:14px}
+  .opt{display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--linea);border-radius:11px;
+    padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:.12s;background:#fff}
+  .opt:hover{border-color:var(--azul);background:#f7fafe}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#eef3f8;color:var(--txt);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .opt.correct{border-color:var(--verde);background:#eafaf0}
+  .opt.correct .key{background:var(--verde);color:#fff}
+  .opt.wrong{border-color:var(--rojo);background:#fdecec}
+  .opt.wrong .key{background:var(--rojo);color:#fff}
+  .opt.disabled{cursor:default}
+  .feedback{border-radius:11px;padding:13px 15px;margin:4px 0 16px;font-size:14.5px;display:none}
+  .feedback.ok{background:#eafaf0;border:1px solid #bce6cd;color:#0f6b38}
+  .feedback.no{background:#fdecec;border:1px solid #f3c4c4;color:#a01d1d}
+  .feedback b{display:block;margin-bottom:3px}
+  .score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;margin:6px auto 14px;color:#fff;font-weight:800}
+  .score-circle b{font-size:34px;line-height:1}
+  .score-circle small{font-size:12px;font-weight:600;opacity:.9}
+  .verdict{text-align:center;font-size:22px;font-weight:800;margin-bottom:4px}
+  .review-item{background:#fff;border:1px solid var(--linea);border-left:4px solid var(--rojo);
+    border-radius:8px;padding:12px 14px;margin-bottom:10px}
+  .review-item .qt{font-weight:600;font-size:14.5px;margin-bottom:6px}
+  .review-item .ln{font-size:13.5px;margin:2px 0}
+  .review-item .ok{color:var(--verde);font-weight:600}
+  .review-item .bad{color:var(--rojo)}
+  .hidden{display:none!important}
+  footer{text-align:center;color:var(--gris);font-size:11.5px;margin-top:24px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo" aria-label="Logo Test DGT">
+      <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="120" cy="120" r="80" fill="none" stroke="var(--verde)" stroke-width="16"/>
+        <circle cx="120" cy="120" r="22" fill="var(--verde)"/>
+        <line x1="120" y1="120" x2="120" y2="48" stroke="var(--verde)" stroke-width="16" stroke-linecap="round"/>
+        <line x1="120" y1="120" x2="182" y2="156" stroke="var(--verde)" stroke-width="16" stroke-linecap="round"/>
+        <line x1="120" y1="120" x2="58" y2="156" stroke="var(--verde)" stroke-width="16" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Test DGT</h1>
+      <span>Practica el examen teórico de conducir</span>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="card">
+      <h2>Elige un modo</h2>
+      <div class="grid">
+        <div class="mode" onclick="startExam()">
+          <div class="ico">📝</div>
+          <b>Examen oficial</b>
+          <small>30 preguntas · máx. 3 fallos · 30 min</small>
+        </div>
+        <div class="mode" onclick="showQuick()">
+          <div class="ico">⚡</div>
+          <b>Test rápido</b>
+          <small>Elige cuántas preguntas quieres</small>
+        </div>
+        <div class="mode" onclick="showTopics()">
+          <div class="ico">📚</div>
+          <b>Por temas</b>
+          <small>Practica una categoría concreta</small>
+        </div>
+        <div class="mode" onclick="startBalanced()">
+          <div class="ico">⚖️</div>
+          <b>Repaso equilibrado</b>
+          <small>2 preguntas de cada uno de los temas</small>
+        </div>
+        <div class="mode" onclick="startFailed()">
+          <div class="ico">🔁</div>
+          <b>Repasar falladas</b>
+          <small id="failedCount">Tus preguntas falladas</small>
+        </div>
+      </div>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 14px;
+             border:1px solid var(--linea);border-radius:11px;cursor:pointer;background:#fafcff">
+        <input type="checkbox" id="balancedToggle" onchange="setBalanced(this.checked)"
+               style="margin-top:3px;width:17px;height:17px;flex:none;cursor:pointer">
+        <span style="font-size:14px;line-height:1.45">
+          <b>Reparto equilibrado por temas</b><br>
+          <span class="muted" style="font-size:12.5px">Aplica al <b>Examen oficial</b> y al <b>Test rápido</b>. Sin activar, las preguntas salen al azar del banco, donde “Señales” y “Normas generales” suman el 36&nbsp;% (más realista). Activado, se reparten entre los 17 temas (mejor para aprender de todo).</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="card hidden" id="quickCard">
+      <h2>Test rápido</h2>
+      <p class="muted" style="margin-bottom:12px">¿Cuántas preguntas quieres responder?</p>
+      <div class="row">
+        <button class="btn ghost sm" onclick="startQuick(10)">10 preguntas</button>
+        <button class="btn ghost sm" onclick="startQuick(20)">20 preguntas</button>
+        <button class="btn ghost sm" onclick="startQuick(30)">30 preguntas</button>
+        <button class="btn ghost sm" onclick="startQuick(50)">50 preguntas</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="topicCard">
+      <h2>Practicar por tema</h2>
+      <p class="muted" style="margin-bottom:10px">Selecciona la categoría:</p>
+      <select id="topicSelect" style="margin-bottom:12px"></select>
+      <div class="row end"><button class="btn" onclick="startTopic()">Empezar</button></div>
+    </div>
+
+    <div class="card">
+      <h2>🤖 Explicaciones con IA</h2>
+      <p class="muted" style="margin-bottom:12px">Cuando falles, la IA te explicará por qué tu respuesta es incorrecta y en qué se diferencia de la correcta. Configura tu clave (se guarda solo en tu navegador).</p>
+      <div class="row" style="gap:10px;margin-bottom:10px">
+        <div style="flex:1;min-width:140px">
+          <label class="muted" style="font-size:12.5px;display:block;margin-bottom:4px">Proveedor</label>
+          <select id="aiProvider" onchange="onProviderChange()">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI (GPT)</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <label class="muted" style="font-size:12.5px;display:block;margin-bottom:4px">Modelo</label>
+          <input id="aiModel" type="text" placeholder="modelo" style="padding:9px 12px;border:1px solid var(--linea);border-radius:9px;background:#fff;width:100%;color:var(--txt);font-family:inherit;font-size:15px">
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label class="muted" style="font-size:12.5px;display:block;margin-bottom:4px">API key</label>
+        <input id="aiKey" type="password" placeholder="sk-..." autocomplete="off" style="padding:9px 12px;border:1px solid var(--linea);border-radius:9px;background:#fff;width:100%;color:var(--txt);font-family:inherit;font-size:15px">
+      </div>
+      <label class="muted" style="font-size:13.5px;display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer">
+        <input id="aiAuto" type="checkbox" checked style="width:auto"> Explicar automáticamente al fallar
+      </label>
+      <div class="row between">
+        <span id="aiStatus" class="muted" style="font-size:12.5px"></span>
+        <button class="btn sm" onclick="saveAI()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tu progreso</h2>
+      <div class="stats">
+        <div class="stat"><b id="stTests">0</b><small>Tests hechos</small></div>
+        <div class="stat"><b id="stRate">—</b><small>% aciertos</small></div>
+        <div class="stat"><b id="stPassed">0</b><small>Aprobados</small></div>
+        <div class="stat"><b id="stPool">0</b><small>Preguntas</small></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn ghost sm" onclick="resetStats()">Borrar progreso</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="card">
+      <div class="qbar">
+        <span id="qPos">Pregunta 1 de 30</span>
+        <span id="qInfo"></span>
+      </div>
+      <div class="progress"><div id="progFill"></div></div>
+      <span class="cat-tag" id="qCat"></span>
+      <div class="q-text" id="qText"></div>
+      <img id="qImg" alt="Imagen de la pregunta" style="display:none;max-width:100%;max-height:300px;border-radius:10px;margin:0 0 16px;border:1px solid var(--linea)">
+      <div id="qOpts"></div>
+      <div class="feedback" id="qFeedback"></div>
+      <div class="row between">
+        <button class="btn ghost sm" onclick="quitQuiz()">✕ Salir</button>
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="hidden">
+    <div class="card">
+      <div class="score-circle" id="scoreCircle"><b id="scoreNum">0/0</b><small id="scorePct">0%</small></div>
+      <div class="verdict" id="verdict"></div>
+      <p class="muted" id="verdictSub" style="text-align:center;margin-bottom:16px"></p>
+      <div class="row" style="justify-content:center">
+        <button class="btn" onclick="repeatTest()">↻ Repetir</button>
+        <button class="btn ghost" onclick="goHome()">Inicio</button>
+      </div>
+    </div>
+    <div class="card hidden" id="reviewCard">
+      <h2 id="reviewTitle">Preguntas falladas</h2>
+      <div id="reviewList"></div>
+    </div>
+  </section>
+
+  <footer>
+    Preguntas oficiales de la DGT (permiso B) con fines de estudio. La normativa puede cambiar; consulta siempre las fuentes oficiales.<br>
+    Para ver las fotos, coloca las imágenes en una carpeta <b>imagenes/</b> junto a este archivo. Banco en <b>preguntas.js</b>.
+  </footer>
+</div>
+
+<script src="preguntas.js"></script>
+<script>
+/* almacenamiento seguro (funciona en local; degrada si el navegador lo bloquea) */
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+/* ---------- Configuración IA ---------- */
+const DEFAULT_MODELS = { anthropic:'claude-haiku-4-5-20251001', openai:'gpt-4o-mini' };
+let aiCfg = store.get('dgt_ai', { provider:'anthropic', key:'', model:DEFAULT_MODELS.anthropic, auto:true });
+let aiCache = store.get('dgt_ai_cache', {});
+
+function loadAIForm(){
+  document.getElementById('aiProvider').value = aiCfg.provider;
+  document.getElementById('aiModel').value = aiCfg.model || DEFAULT_MODELS[aiCfg.provider];
+  document.getElementById('aiKey').value = aiCfg.key || '';
+  document.getElementById('aiAuto').checked = aiCfg.auto !== false;
+  document.getElementById('aiStatus').textContent = aiCfg.key ? '✓ Clave guardada' : 'Sin configurar';
+}
+function onProviderChange(){
+  const p = document.getElementById('aiProvider').value;
+  document.getElementById('aiModel').value = DEFAULT_MODELS[p];
+}
+function saveAI(){
+  aiCfg = {
+    provider: document.getElementById('aiProvider').value,
+    model: document.getElementById('aiModel').value.trim() || DEFAULT_MODELS[document.getElementById('aiProvider').value],
+    key: document.getElementById('aiKey').value.trim(),
+    auto: document.getElementById('aiAuto').checked
+  };
+  store.set('dgt_ai', aiCfg);
+  document.getElementById('aiStatus').textContent = aiCfg.key ? '✓ Clave guardada' : 'Sin configurar';
+}
+function aiReady(){ return !!(aiCfg && aiCfg.key); }
+
+function buildPrompt(q, chosenIdx){
+  const yourTxt = chosenIdx===undefined ? '(no respondió)' : q.opts[chosenIdx];
+  const correctTxt = q.opts[q.correct];
+  const wrongOpts = q.opts.filter((_,i)=>i!==q.correct).map(o=>'- '+o).join('\n');
+  return `Eres profesor de autoescuela en España (DGT, permiso B). Te doy una pregunta de test, la opción que eligió el alumno y la opción correcta.
+
+Pregunta: "${q.q}"
+Opción que eligió el alumno: "${yourTxt}"
+Opción CORRECTA: "${correctTxt}"
+Otras opciones de la pregunta:
+${wrongOpts}
+${q.exp ? 'Nota oficial: '+q.exp : ''}
+
+Explica en 2 o 4 frases, en español claro y cercano:
+1) Por qué la opción del alumno es incorrecta.
+2) En qué se diferencia concretamente de la correcta y por qué la correcta sí lo es.
+Relaciona ambas opciones (no las expliques por separado). NO empieces con "La respuesta correcta es". Ve directo al razonamiento.`;
+}
+
+async function callAI(prompt){
+  if(aiCfg.provider==='openai'){
+    const r = await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+aiCfg.key },
+      body: JSON.stringify({ model:aiCfg.model, max_tokens:300, temperature:0.4,
+        messages:[{role:'user',content:prompt}] })
+    });
+    if(!r.ok) throw new Error('OpenAI '+r.status+': '+(await r.text()).slice(0,200));
+    const d = await r.json();
+    return d.choices[0].message.content.trim();
+  } else {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key':aiCfg.key,
+        'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:aiCfg.model, max_tokens:300,
+        messages:[{role:'user',content:prompt}] })
+    });
+    if(!r.ok) throw new Error('Anthropic '+r.status+': '+(await r.text()).slice(0,200));
+    const d = await r.json();
+    return d.content.map(b=>b.text||'').join('').trim();
+  }
+}
+
+/* Rellena un contenedor con la explicación IA para la pregunta q y la opción elegida. */
+async function explainInto(container, q, chosenIdx){
+  const cacheKey = q.id+':'+(chosenIdx===undefined?'x':chosenIdx);
+  if(aiCache[cacheKey]){ container.innerHTML = '<b>🤖 Por qué fallaste</b>'+escapeHtml(aiCache[cacheKey]); return; }
+  if(!aiReady()){ container.innerHTML = '<span style="color:var(--gris)">Configura una API key en Inicio → «Explicaciones con IA» para ver el porqué.</span>'; return; }
+  container.innerHTML = '<b>🤖 Por qué fallaste</b><span style="color:var(--gris)">Generando explicación…</span>';
+  try{
+    const txt = await callAI(buildPrompt(q, chosenIdx));
+    aiCache[cacheKey] = txt; store.set('dgt_ai_cache', aiCache);
+    container.innerHTML = '<b>🤖 Por qué fallaste</b>'+escapeHtml(txt);
+  }catch(e){
+    container.innerHTML = '<b>🤖 No se pudo generar</b><span style="color:var(--rojo)">'+escapeHtml(e.message)+'</span>';
+  }
+}
+function escapeHtml(s){ return String(s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/\n/g,'<br>'); }
+
+const POOL = (window.PREGUNTAS||[]).slice();
+let stats = store.get('dgt_stats',{tests:0,passed:0,answered:0,correct:0});
+let failedIds = store.get('dgt_failed',[]);
+let state = null;
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickRandom(n){return shuffle(POOL).slice(0,Math.min(n,POOL.length));}
+
+/* Reparto equilibrado: reparte las n preguntas entre todos los temas por turnos
+   (round-robin), de modo que ningun tema se quede fuera mientras haya sitio. */
+function poolsByCat(){
+  const byCat={};
+  for(const q of POOL){ if(!byCat[q.cat]) byCat[q.cat]=[]; byCat[q.cat].push(q); }
+  return byCat;
+}
+function catCount(){ return Object.keys(poolsByCat()).length; }
+function pickBalanced(n){
+  const byCat=poolsByCat();
+  const cats=shuffle(Object.keys(byCat));
+  const pools={}; cats.forEach(c=>{pools[c]=shuffle(byCat[c]);});
+  const out=[]; let avanza=true;
+  while(out.length<n && avanza){
+    avanza=false;
+    for(const c of cats){
+      if(out.length>=n) break;
+      if(pools[c].length){ out.push(pools[c].pop()); avanza=true; }
+    }
+  }
+  return shuffle(out);
+}
+function balancedOn(){ return store.get('dgt_balanced',false)===true; }
+function setBalanced(v){ store.set('dgt_balanced',!!v); }
+function pick(n){ return balancedOn()? pickBalanced(n) : pickRandom(n); }
+function byId(id){return POOL.find(q=>q.id===id);}
+
+function renderHome(){
+  document.getElementById('stTests').textContent = stats.tests;
+  document.getElementById('stRate').textContent = stats.answered? Math.round(stats.correct/stats.answered*100)+'%':'—';
+  document.getElementById('stPassed').textContent = stats.passed;
+  document.getElementById('stPool').textContent = POOL.length;
+  document.getElementById('failedCount').textContent = failedIds.length? (failedIds.length+' preguntas pendientes') : 'Sin falladas, ¡bien!';
+  const cats=[...new Set(POOL.map(q=>q.cat))].sort();
+  document.getElementById('topicSelect').innerHTML = cats.map(c=>`<option value="${c}">${c} (${POOL.filter(q=>q.cat===c).length})</option>`).join('');
+  const bt=document.getElementById('balancedToggle'); if(bt) bt.checked=balancedOn();
+  loadAIForm();
+}
+function showQuick(){toggle('quickCard');}
+function showTopics(){toggle('topicCard');}
+function toggle(id){document.getElementById(id).classList.toggle('hidden');}
+
+function startExam(){ begin(pick(30),'examen',3,30); }
+function startQuick(n){ begin(pick(n),'rapido',Math.ceil(n*0.1),0); }
+function startBalanced(){ const n=catCount()*2; begin(pickBalanced(n),'equilibrado',null,0); }
+function startTopic(){
+  const c=document.getElementById('topicSelect').value;
+  begin(shuffle(POOL.filter(q=>q.cat===c)).slice(0,40),'tema',null,0);
+}
+function startFailed(){
+  if(!failedIds.length){alert('No tienes preguntas falladas guardadas. ¡Haz un test primero!');return;}
+  begin(shuffle(failedIds.map(byId).filter(Boolean)),'falladas',null,0);
+}
+
+function begin(questions, mode, passMax, minutes){
+  if(!questions.length){alert('No hay preguntas disponibles.');return;}
+  state={questions, idx:0, correctCount:0, answers:[], order:[], mode, passMax, minutes,
+         startTime:Date.now(), timer:null, timeLeft:minutes*60};
+  show('quiz');
+  if(minutes>0) startTimer();
+  renderQuestion();
+}
+
+function startTimer(){
+  updateTimerLabel();
+  state.timer=setInterval(()=>{
+    state.timeLeft--; updateTimerLabel();
+    if(state.timeLeft<=0){clearInterval(state.timer);finishTest(true);}
+  },1000);
+}
+function updateTimerLabel(){
+  if(!state.minutes){document.getElementById('qInfo').textContent='';return;}
+  const m=Math.floor(state.timeLeft/60), s=state.timeLeft%60;
+  document.getElementById('qInfo').textContent='⏱ '+m+':'+String(s).padStart(2,'0');
+}
+
+function renderQuestion(){
+  const q=state.questions[state.idx];
+  const total=state.questions.length;
+  document.getElementById('qPos').textContent=`Pregunta ${state.idx+1} de ${total}`;
+  document.getElementById('progFill').style.width=(state.idx/total*100)+'%';
+  document.getElementById('qCat').textContent=q.cat;
+  document.getElementById('qText').textContent=q.q;
+  const im=document.getElementById('qImg');
+  if(q.img){ im.style.display='none'; im.onload=()=>{im.style.display='block';}; im.onerror=()=>{im.style.display='none';}; im.src='imagenes/'+q.img; }
+  else { im.style.display='none'; im.removeAttribute('src'); }
+  const keys=['A','B','C','D','E'];
+  const opts=document.getElementById('qOpts');
+  opts.innerHTML='';
+  const order=shuffle(q.opts.map((_,i)=>i));
+  state.order=order;
+  order.forEach((origIdx,pos)=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.innerHTML=`<div class="key">${keys[pos]}</div><div>${q.opts[origIdx]}</div>`;
+    d.onclick=()=>answer(origIdx,d);
+    opts.appendChild(d);
+  });
+  const fb=document.getElementById('qFeedback');
+  fb.style.display='none';fb.className='feedback';
+  const nb=document.getElementById('nextBtn');
+  nb.disabled=true;
+  nb.textContent=(state.idx===total-1)?'Ver resultado →':'Siguiente →';
+}
+
+function answer(choice, el){
+  const q=state.questions[state.idx];
+  if(state.answers[state.idx]!==undefined) return;
+  state.answers[state.idx]=choice;
+  const nodes=document.querySelectorAll('#qOpts .opt');
+  nodes.forEach((n,pos)=>{
+    n.classList.add('disabled'); n.onclick=null;
+    if(state.order[pos]===q.correct) n.classList.add('correct');
+  });
+  const fb=document.getElementById('qFeedback');
+  if(choice===q.correct){
+    state.correctCount++;
+    fb.className='feedback ok';fb.innerHTML='<b>✓ ¡Correcto!</b>'+(q.exp||'');
+    removeFailed(q.id);
+  }else{
+    el.classList.add('wrong');
+    const keys=['A','B','C','D','E'];
+    const correctPos=state.order.indexOf(q.correct);
+    fb.className='feedback no';
+    fb.innerHTML=`<b>✗ Incorrecto</b>Tú elegiste <b style="display:inline">${q.opts[choice]}</b>. La respuesta correcta es <b style="display:inline">${keys[correctPos]}) ${q.opts[q.correct]}</b>. ${q.exp||''}`;
+    const aiBox=document.createElement('div');
+    aiBox.style.cssText='margin-top:10px;padding-top:10px;border-top:1px dashed #f3c4c4;font-size:14px';
+    fb.appendChild(aiBox);
+    if(aiCfg.auto!==false && (aiReady() || aiCache[q.id+':'+choice])){
+      explainInto(aiBox, q, choice);
+    }else{
+      const btn=document.createElement('button');
+      btn.className='btn ghost sm'; btn.textContent='🤖 Explícame por qué fallé';
+      btn.onclick=()=>{ btn.replaceWith(aiBox); explainInto(aiBox, q, choice); };
+      aiBox.replaceWith(btn);
+    }
+    addFailed(q.id);
+  }
+  fb.style.display='block';
+  document.getElementById('nextBtn').disabled=false;
+}
+
+function nextQuestion(){
+  if(state.idx < state.questions.length-1){ state.idx++; renderQuestion(); window.scrollTo(0,0); }
+  else finishTest(false);
+}
+
+function addFailed(id){ if(!failedIds.includes(id)){failedIds.push(id);store.set('dgt_failed',failedIds);} }
+function removeFailed(id){ const i=failedIds.indexOf(id); if(i>-1){failedIds.splice(i,1);store.set('dgt_failed',failedIds);} }
+
+function countWrong(){
+  let w=0; state.questions.forEach((q,i)=>{ if(state.answers[i]===undefined || state.answers[i]!==q.correct) w++; });
+  return w;
+}
+function answeredCount(){return state.answers.filter(a=>a!==undefined).length;}
+function passes(){
+  if(state.passMax==null) return state.correctCount === state.questions.length;
+  return countWrong() <= state.passMax;
+}
+
+function finishTest(byTimeout){
+  if(state.timer) clearInterval(state.timer);
+  const total=state.questions.length, correct=state.correctCount;
+  stats.tests++; stats.answered+=answeredCount(); stats.correct+=correct;
+  const passed=passes();
+  if(passed) stats.passed++;
+  store.set('dgt_stats',stats);
+
+  show('results');
+  const pct=total? Math.round(correct/total*100):0;
+  const circle=document.getElementById('scoreCircle');
+  circle.style.background = passed? 'var(--verde)' : 'var(--rojo)';
+  document.getElementById('scoreNum').textContent=correct+'/'+total;
+  document.getElementById('scorePct').textContent=pct+'%';
+  const v=document.getElementById('verdict');
+  v.textContent = passed? '¡APTO! 🎉' : 'NO APTO';
+  v.style.color = passed? 'var(--verde)':'var(--rojo)';
+
+  let sub='';
+  if(state.passMax!=null){
+    sub=`${countWrong()} fallo(s). `+(passed?`Dentro del límite de ${state.passMax}.`:`Máximo permitido: ${state.passMax}.`);
+  }else{
+    sub=`Has acertado ${correct} de ${total}.`;
+  }
+  if(byTimeout) sub='⏱ Se acabó el tiempo. '+sub;
+  document.getElementById('verdictSub').textContent=sub;
+
+  renderReview();
+  renderHome();
+}
+
+function renderReview(){
+  const list=document.getElementById('reviewList');
+  const card=document.getElementById('reviewCard');
+  const keys=['A','B','C','D','E'];
+  const wrong=state.questions.map((q,i)=>({q,i})).filter(o=>state.answers[o.i]!==o.q.correct);
+  if(!wrong.length){ card.classList.add('hidden'); return; }
+  card.classList.remove('hidden');
+  document.getElementById('reviewTitle').textContent=`Repasa tus ${wrong.length} fallo(s)`;
+  list.innerHTML = wrong.map(({q,i})=>{
+    const your = state.answers[i]===undefined? '— (sin responder)' : q.opts[state.answers[i]];
+    return `<div class="review-item" data-ridx="${i}">
+      <div class="qt">${q.q}</div>
+      <div class="ln bad">Tu respuesta: ${your}</div>
+      <div class="ln ok">Correcta: ${q.opts[q.correct]}</div>
+      <div class="ln" style="color:var(--gris)">${q.exp||''}</div>
+      <div class="ai-slot" style="margin-top:8px"></div>
+    </div>`;
+  }).join('');
+  wrong.forEach(({q,i})=>{
+    const slot=list.querySelector(`.review-item[data-ridx="${i}"] .ai-slot`);
+    if(!slot) return;
+    const choice=state.answers[i];
+    if(aiCfg.auto!==false && (aiReady() || aiCache[q.id+':'+(choice===undefined?'x':choice)])){
+      explainInto(slot, q, choice);
+    }else if(aiReady()){
+      const btn=document.createElement('button');
+      btn.className='btn ghost sm'; btn.textContent='🤖 Explícame por qué fallé';
+      btn.onclick=()=>{ btn.replaceWith(slot); explainInto(slot, q, choice); };
+      slot.replaceWith(btn);
+    }
+  });
+}
+
+function repeatTest(){
+  if(!state) return goHome();
+  begin(shuffle(state.questions), state.mode, state.passMax, state.minutes);
+}
+function quitQuiz(){ if(confirm('¿Salir del test? Se perderá el progreso de este test.')){ if(state.timer)clearInterval(state.timer); goHome(); } }
+function goHome(){ show('home'); renderHome(); }
+function show(id){ ['home','quiz','results'].forEach(s=>document.getElementById(s).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); window.scrollTo(0,0); }
+function resetStats(){ if(confirm('¿Borrar todo tu progreso y preguntas falladas?')){ stats={tests:0,passed:0,answered:0,correct:0}; failedIds=[]; store.set('dgt_stats',stats); store.set('dgt_failed',failedIds); renderHome(); } }
+
+renderHome();
+
+/* ---------- PWA: registro del service worker (offline + instalable) ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

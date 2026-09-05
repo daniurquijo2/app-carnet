@@ -1,0 +1,9 @@
+# Material de trabajo, no se publica
+_anki/
+_originales/
+*.bak
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
